@@ -25,6 +25,18 @@ public class JpaMain {
             for (Member member : result) {
                 System.out.println("member.name = " + member.getName());
             }
+
+            //비영속
+            Member memberA = new Member();
+            memberA.setId(100L);
+            memberA.setName("memberA");
+            //영속
+            em.persist(memberA);
+            //준영속
+            em.detach(memberA);
+
+
+            //쿼리 발생
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
