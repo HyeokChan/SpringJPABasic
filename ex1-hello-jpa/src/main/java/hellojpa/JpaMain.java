@@ -16,24 +16,10 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-            /*Member findMember = em.find(Member.class, 1L);
-            findMember.setName("HelloJPA");*/
-            List<Member> result = em.createQuery("select m from Member as m", Member.class)
-                    .setFirstResult(1)
-                    .setMaxResults(10)
-                    .getResultList();
-            for (Member member : result) {
-                System.out.println("member.name = " + member.getName());
-            }
+            Member member = em.find(Member.class, 150L);
+            member.setName("ZZZZZ");
+            System.out.println("===========================");
 
-            //비영속
-            Member memberA = new Member();
-            memberA.setId(100L);
-            memberA.setName("memberA");
-            //영속
-            em.persist(memberA);
-            //준영속
-            em.detach(memberA);
 
 
             //쿼리 발생
