@@ -10,7 +10,8 @@ public class Member {
     private Long id;
     private String name;
 
-    public Member() {
+    protected Member() {
+
     }
 
     public Member(Long id, String name) {
