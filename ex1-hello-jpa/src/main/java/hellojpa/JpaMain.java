@@ -4,6 +4,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -15,13 +18,13 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-            Member member = em.find(Member.class, 200L);
-            member.setName("123");
-
-            em.clear();
-
-            Member member2 = em.find(Member.class, 200L);
-
+            Member member = new Member();
+            member.setId(2L);
+            member.setUsername("B");
+            member.setRoleType(RoleType.USER);
+            member.setCreatedDate(LocalDateTime.now());
+            member.setLastModifiedDate(LocalDateTime.now());
+            em.persist(member);
             //쿼리 발생
             tx.commit();
         } catch (Exception e) {
