@@ -6,34 +6,21 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@SequenceGenerator(
-        name = "MEMBER_SEQ_GENERATOR",
-        sequenceName = "MEMBER_SEQ",
-        initialValue = 1, allocationSize = 50)
 public class Member {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "MEMBER_SEQ_GENERATOR")
+    @GeneratedValue
+    @Column(name = "MEMBER_ID")
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "USERNAME")
     private String username;
 
-    @Column(columnDefinition = "integer(3) default 0")
-    private Integer age;
+    /*@Column(name = "TEAM_ID")
+    private Long teamId;*/
 
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
-
-    private LocalDateTime createdDate;
-
-    private LocalDateTime lastModifiedDate;
-
-    @Lob
-    private String description;
-
-    @Transient
-    private int temp;
+    @ManyToOne
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
 
     protected Member() {
 
@@ -55,51 +42,11 @@ public class Member {
         this.username = username;
     }
 
-    public Integer getAge() {
-        return age;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public RoleType getRoleType() {
-        return roleType;
-    }
-
-    public void setRoleType(RoleType roleType) {
-        this.roleType = roleType;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getTemp() {
-        return temp;
-    }
-
-    public void setTemp(int temp) {
-        this.temp = temp;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }
