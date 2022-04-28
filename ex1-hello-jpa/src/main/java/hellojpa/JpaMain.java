@@ -15,23 +15,17 @@ public class JpaMain {
 
         EntityManager em = emf.createEntityManager();
 
-
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-            Movie movie = new Movie();
-            movie.setDirector("directorA");
-            movie.setActor("actorA");
-            movie.setName("바람과함사라지다");
-            movie.setPrice(10000);
-            em.persist(movie);
+            Member member = new Member();
+            member.setUsername("user1");
+            member.setCreatedBy("kim");
+            member.setCreatedDate(LocalDateTime.now());
+            member.setModifiedBy("kim");
+            member.setModifiedDate(LocalDateTime.now());
 
-            em.flush();
-            em.clear();
-
-            Movie findMovie = em.find(Movie.class, movie.getId());
-            System.out.println("findMovie = " + findMovie);
-
+            em.persist(member);
 
             tx.commit();
         } catch (Exception e) {
