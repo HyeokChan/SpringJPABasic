@@ -9,6 +9,5 @@ public class Locker {
     private Long id;
     private String name;
 
-    @OneToOne(mappedBy = "locker", fetch = FetchType.LAZY)
-    private Member member;
+
 }

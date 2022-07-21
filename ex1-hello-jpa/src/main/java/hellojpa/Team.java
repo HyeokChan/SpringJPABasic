@@ -12,8 +12,6 @@ public class Team extends BaseEntity{
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "team")
-    private List<Member> members = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -31,13 +29,6 @@ public class Team extends BaseEntity{
         this.name = name;
     }
 
-    public List<Member> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<Member> members) {
-        this.members = members;
-    }
 
 
 }

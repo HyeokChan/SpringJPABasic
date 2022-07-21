@@ -9,29 +9,27 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 @Entity
-public class Member extends BaseEntity {
+public class Member{
     @Id
     @GeneratedValue
     @Column(name = "MEMBER_ID")
     private Long id;
 
-    @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
+    @Embedded
+    private Period  workPeriod;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
+    @Embedded
+    private Address homeAddress;
 
-    @OneToMany(mappedBy = "member")
-    private List<MemberProduct> memberProducts = new ArrayList<>();
-
-
-    protected Member() {
-    }
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city", column = @Column(name = "work_city")),
+            @AttributeOverride(name = "street", column = @Column(name = "work_street")),
+            @AttributeOverride(name = "zipcode", column = @Column(name = "work_zipcode"))
+    })
+    private Address workAddress;
 
     public Long getId() {
         return id;
@@ -49,35 +47,19 @@ public class Member extends BaseEntity {
         this.username = username;
     }
 
-    public Team getTeam() {
-        return team;
+    public Period getWorkPeriod() {
+        return workPeriod;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWorkPeriod(Period workPeriod) {
+        this.workPeriod = workPeriod;
     }
 
-    public Locker getLocker() {
-        return locker;
+    public Address getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setLocker(Locker locker) {
-        this.locker = locker;
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
-
-    public List<MemberProduct> getMemberProducts() {
-        return memberProducts;
-    }
-
-    public void setMemberProducts(List<MemberProduct> memberProducts) {
-        this.memberProducts = memberProducts;
-    }
-
-    // 연관관계 편의 메소드 설정
-    public void changeTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
-    }
-
-
 }
