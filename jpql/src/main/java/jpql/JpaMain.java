@@ -10,21 +10,23 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            em.persist(member);
-
+            for(int i=0; i<100; i++){
+                Member member = new Member();
+                member.setUsername("member" + i);
+                member.setAge(i);
+                em.persist(member);
+            }
             em.flush();
             em.clear();
 
-            List<MemberDTO> resultList = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
+            List<Member> resultList = em.createQuery("select m from Member m order by m.age desc", Member.class)
+                    .setFirstResult(1)
+                    .setMaxResults(10)
                     .getResultList();
-            for (MemberDTO result : resultList) {
-                System.out.println("result = " + result.getUsername());
-                System.out.println("result = " + result.getAge());
+            System.out.println("resultList.size = " + resultList.size());
+            for (Member member1 : resultList) {
+                System.out.println("member1 = " + member1);
             }
-
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
