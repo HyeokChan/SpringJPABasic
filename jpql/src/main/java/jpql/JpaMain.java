@@ -1,32 +1,27 @@
-package hellojpa;
+package jpql;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class JpaMain {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
-
         EntityManager em = emf.createEntityManager();
-
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setAge(10);
+            em.persist(member);
+            List<Member> findMembers = em.createQuery("select m from Member m where m.username = :username", Member.class)
+                    .setParameter("username", "member1")
+                    .getResultList();
 
-            List<Member> result = em.createQuery(
-                    "select m from Member m where m.username like '%kim%'",
-                    Member.class
-            ).getResultList();
-
-            for (Member member : result) {
-                System.out.println("member = " + member);
+            for (Member findMember : findMembers) {
+                System.out.println("findMember.age = " + findMember.getAge());
             }
 
-            tx.commit();
         } catch (Exception e) {
             tx.rollback();
             e.printStackTrace();
@@ -34,6 +29,5 @@ public class JpaMain {
             em.close();
         }
         emf.close();
-
     }
 }
