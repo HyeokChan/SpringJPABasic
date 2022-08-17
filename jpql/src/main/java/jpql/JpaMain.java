@@ -24,7 +24,8 @@ public class JpaMain {
             em.flush();
             em.clear();
 //            String query = "select m from Member m left outer join m.team t on t.name = 'teamA'";
-            String query = "select m from Member m left outer join Team t on m.username = t.name and t.name = 'teamA'";
+//            String query = "select m from Member m left outer join Team t on m.username = t.name and t.name = 'teamA'";
+            String query = "select (select avg(m1.age) from Member m1) as avgAge, m from Member m";
             List<Member> resultList = em.createQuery(query, Member.class)
                     .getResultList();
             for (Member member1 : resultList) {
