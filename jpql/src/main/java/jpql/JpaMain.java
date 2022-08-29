@@ -36,7 +36,8 @@ public class JpaMain {
 //            String query = "select substring(m.username, 2, 1) from Member m";
 //            String query = "select locate('de', 'abcdefg') from Member m";
 //            String query = "select size(t.members) from Team t";
-            String query = "select function('group_concat', m.username) from Member m ";
+            // 실무에서는 묵시적 조인 사용하지 않는다. 운영/튜닝 상황에서 어려움 있음
+            String query = "select m.username from Team t join t.members m";
             List<String> result = em.createQuery(query, String.class)
                     .getResultList();
             for (String s : result) {
