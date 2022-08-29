@@ -15,33 +15,43 @@ public class JpaMain {
             team.setName("teamA");
             em.persist(team);
 
+            Team team2 = new Team();
+            team2.setName("teamB");
+            em.persist(team2);
+
             Member member = new Member();
-            member.setUsername("관리자");
+            member.setUsername("회원1");
             member.setAge(10);
             member.changeTeam(team);
             member.setType(MemberType.ADMIN);
             em.persist(member);
 
             Member member2 = new Member();
-            member2.setUsername("관리자2");
+            member2.setUsername("회원2");
             member2.setAge(10);
             member2.changeTeam(team);
             member2.setType(MemberType.ADMIN);
             em.persist(member2);
 
+            Member member3 = new Member();
+            member3.setUsername("회원3");
+            member3.setAge(10);
+            member3.changeTeam(team2);
+            member3.setType(MemberType.ADMIN);
+            em.persist(member3);
+
             em.flush();
             em.clear();
 
-//            String query = "select concat('a', 'b') from Member m";
-//            String query = "select substring(m.username, 2, 1) from Member m";
-//            String query = "select locate('de', 'abcdefg') from Member m";
-//            String query = "select size(t.members) from Team t";
-            // 실무에서는 묵시적 조인 사용하지 않는다. 운영/튜닝 상황에서 어려움 있음
-            String query = "select m.username from Team t join t.members m";
-            List<String> result = em.createQuery(query, String.class)
+            // jpa의 distinct는 쿼리에 distinct를 추가할 뿐 아니라 같은 엔티티의 중복도 제거한다.
+            String query = "select distinct t from Team t join fetch t.members";
+            List<Team> result = em.createQuery(query, Team.class)
                     .getResultList();
-            for (String s : result) {
-                System.out.println("s = " + s);
+            for (Team t : result) {
+                System.out.println("t = " + t.getName() + ", members = " + t.getMembers().size());
+                for (Member tMember : t.getMembers()) {
+                    System.out.println("tMember = " + tMember);
+                }
             }
 
             tx.commit();
