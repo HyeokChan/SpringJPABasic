@@ -46,14 +46,12 @@ public class JpaMain {
             // jpa의 distinct는 쿼리에 distinct를 추가할 뿐 아니라 같은 엔티티의 중복도 제거한다.
 //            String query = "select distinct t from Team t join fetch t.members";
             // batch-fetch-size 적용
-            String query = "select t from Team t";
-            List<Team> result = em.createQuery(query, Team.class)
+            String query = "select m from Member m where m.team = :team";
+            List<Member> findMembers = em.createQuery(query, Member.class)
+                    .setParameter("team", team)
                     .getResultList();
-            for (Team t : result) {
-                System.out.println("t = " + t.getName() + ", members = " + t.getMembers().size());
-                for (Member tMember : t.getMembers()) {
-                    System.out.println("tMember = " + tMember);
-                }
+            for (Member findMember : findMembers) {
+                System.out.println("findMember = " + findMember);
             }
 
             tx.commit();
