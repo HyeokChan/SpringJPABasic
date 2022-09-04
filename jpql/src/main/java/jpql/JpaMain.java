@@ -40,15 +40,14 @@ public class JpaMain {
             member3.setType(MemberType.ADMIN);
             em.persist(member3);
 
-            em.flush();
+            // 쿼리 날리면서 flush 자동 호출
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
+            // 벌크연산 후 영속성 컨텍스트 초기화
             em.clear();
-
-            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
-                    .setParameter("username", "회원1")
-                    .getResultList();
-            for (Member findMember : resultList) {
-                System.out.println("member = " + findMember);
-            }
+            System.out.println("resultCount = " + resultCount);
+            Member findMember = em.find(Member.class, member.getId());
+            System.out.println("findMember = " + findMember);
 
 
             tx.commit();
