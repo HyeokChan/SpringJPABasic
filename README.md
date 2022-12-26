@@ -255,3 +255,91 @@ tx.commit();
 	- 부모 클래스를 상속받는 자식클래스에 매핑 정보ㅁ나 제공
 	- 조회, 검색 불가능
 	- 직접 생성해서 사용할 일이 없으므로 추상 클래스 권장
+
+### 프록시
+#### 프록시 특징
+1. 실제 클래스를 상속받아서 생성
+2. 프록시 객체는 실제 객체의 참조를 보관
+3. 프록시 객체를 호출하면 프록시 객체는 실제 객체의 메서드를 호출
+#### 즉시로딩과 지연로딩
+1. member 객체와 team 객체가 있을 때, member 객체의 항목만 필요하다면 team 객체를 조회할 필요 없음
+2. @ManyToOne(fetch = FetchType.LAZY) 어노테이션을 통해 team 객체에 지연로딩 설정하여 프록시로 조회
+3. team 객체가 필요한 순간에 로딩해서 사용 가능
+4. 즉시로딩 설정 : @ManyToOne(fetch = FetchType.EAGER)
+#### 즉시로딩 주의사항
+1. 가급적 지연로딩만 사용
+2. 즉시로딩은 JPQL에서 1+N 문제를 일으킨다(연쇄적으로 전부 조회)
+3. @XXtoOne 관계는 기본이 즉시로딩이기 때문에 FetchType LAZY 설정 필요
+#### 영속성전이 : CASCADE
+1. 특정 엔티티를 영속상태로 만들 때, 연관된 엔티티도 함께 영속상태로 만들고 싶을 때 사용
+2. @OneToMany(mappedBy="parent", cascade=CascadeType.PERSIST)
+3. CASCADE 종류
+    - ALL : 모두 적용
+    - PERSIST : 영속
+    - REMOVE : 삭제
+#### 고아객체
+1. 부모 엔티티와 연관관계가 끊어진 자식 엔티티
+2. 고아객체 삭제 설정 : orphanRemoval = true
+3. 고아객체 주의
+    - 참조하는 곳이 부모 자신 하나일 때 사용해야함
+    - 부모객체를 삭제하면서 자식객체를 삭제했는데 그 자식객체를 참조하고 있는 객체가 있으면 안됨
+### JPQL
+#### 특징 : 객체지향 쿼리 언어로 테이블을 대상으로 쿼리하지 않고 엔티티 객체를 대상으로 함
+#### jqpl 문법
+1. 결국 SQL로 변환됨
+2. 기본 구성
+    ~~~
+    select_문 :: = select_절
+    from_절 [where_절] [groupby_절] [having_절][orderby_절]
+    update_문 :: = update_절 [where_절] delete_문 :: = delete_절 [where_절]
+    ~~~
+3. 집계함수
+    ~~~
+    select
+    COUNT(m), 
+    SUM(m.age),
+    AVG(m.age),
+    MIN(m.age)
+    from Member m
+    ~~~
+4. 반환타입
+    - TypeQuery : 반환 타입이 명확할 때 사용
+        ~~~
+        TypedQuery<Member> query =
+        em.createQuery("SELECT m FROM Member m", Member.class);
+        ~~~
+    - Query : 반환 타입이 명확하지 않을 때 사용
+        ~~~
+        Query query =
+        em.createQuery("SELECT m.username, m.age from Member m");
+        ~~~
+5. 결과 조회 API
+    - query.getResultList() : 결과가 하나 이상일 때 사용, 결과가 없으면 빈 리스트 반환
+    - query.getSingleResult() : 결과가 정확히 하나 일때 사용, 하나도 없거나 2개 이상이면 에러 발생
+6. 파라미터 바인딩
+    - 이름 기준 : 
+        ~~~
+        SELECT m FROM Member m where m.username=:username query.setParameter("username", usernameParam);
+        ~~~
+    - 위치 기준 : 
+        ~~~
+        SELECT m FROM Member m where m.username=?1 query.setParameter(1, usernameParam);
+        ~~~
+7. 페이징 API
+    - setFirstResult(int startPosition) : 조회 시작 위치
+    - setMaxResult(int maxResult) : 조회할 데이터 수
+#### JPQL 페치 조인
+1. 특징
+    - SQL조인 종류 아님
+    - JPQL에서 성능 최적화를 위해 제공
+    - 연관된 엔티티나 컬렉션을 SQL 한 번에 함께 조회(즉시 로딩)
+    - join fetch 명령어 사용
+2. 사용 예시
+    ~~~
+    [JPQL]
+    select m from Member m join fetch m.team
+    [SQL]
+    SELECT M.*, T.* FROM MEMBER M
+    INNER JOIN TEAM T ON M.TEAM_ID=T.ID
+    ~~~
+***
